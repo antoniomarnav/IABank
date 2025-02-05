@@ -1,0 +1,187 @@
+{
+  "name": "accountAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -400,
+        -60
+      ],
+      "id": "298f780e-2166-47d2-bace-2efc8180255d",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        160
+      ],
+      "id": "87f04149-d7c6-4838-ae75-f61233241eeb",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.generadordni.es/v2/profiles/person",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "results",
+              "valueProvider": "fieldValue",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -20,
+        160
+      ],
+      "id": "afd291d7-65bf-4915-b9c4-a74a0062ba9d",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6541757b-8993-4529-809a-62a66c13d77c",
+              "name": "response",
+              "value": "An error occurred. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        40
+      ],
+      "id": "c266ef05-75f9-408f-8f6e-0ea58e8101e9",
+      "name": "Error"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f9811d11-8aa8-468c-89f3-276dfce1afca",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        -140
+      ],
+      "id": "15bacefa-98ba-422e-ad3d-6b85a8625c6b",
+      "name": "Success"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Overview\nYou are a client management assistant. Your responsibilities is get all de client information.\n\n**Contact Management**  \n   - Use \"https\" to get client information.  ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -180,
+        -60
+      ],
+      "id": "649f5fa9-1b27-4225-9003-d9793ccf50bd",
+      "name": "accountAgent",
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "accountAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "accountAgent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "ai_tool": [
+        [
+          {
+            "node": "accountAgent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "accountAgent": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2fa9841f-0ec5-4b3c-98a2-ef0a323e7178",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "rqgp01pF6rqGcuhm",
+  "tags": []
+}

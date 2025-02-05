@@ -1,0 +1,194 @@
+{
+  "name": "IABank",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        180,
+        140
+      ],
+      "id": "05514a10-4b2d-44fb-8de2-e06a784bb767",
+      "name": "When chat message received",
+      "webhookId": "45d901bd-dc97-476d-a492-1ef4d8214ee0"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        320,
+        380
+      ],
+      "id": "9e8bc408-b759-4960-a860-770b3f43eee2",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "clientAgent",
+        "description": "Call this tool for any client related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "ybClESS2NEIijQWy",
+          "mode": "list",
+          "cachedResultName": "clientAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        560,
+        380
+      ],
+      "id": "e5d20aac-7e69-471f-a0b2-1acb4dcd4d9b",
+      "name": "clientAgent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview\nYou are the ultimate personal bank assistant. Your job is to send the user's query to the correct tool. You should never answer any question that is not about banking. For any other question, answer \"that request cannot be processed.\"\n\n## Tools\n- clientAgent: Use this tool to get client info\n\n## Rules\n\n\n## Examples\n1) \n- Input: give me my user information\n  - Action: Use clientAgent to get client information\n- Output: show the client info.\n\n\n## Final Reminders\nHere is the current date/time: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        360,
+        140
+      ],
+      "id": "d61f84d5-eb5d-4b14-a95f-e78ab00068dd",
+      "name": "AIBank"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        440,
+        380
+      ],
+      "id": "c96f00ef-8e58-45e5-84f6-4503f4d85914",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "name": "accountAgent",
+        "description": "Call this tool for any account related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "rqgp01pF6rqGcuhm",
+          "mode": "list",
+          "cachedResultName": "accountAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        680,
+        380
+      ],
+      "id": "469c78a7-d40d-44dc-938f-d904786d5aac",
+      "name": "accountAgent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AIBank",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AIBank",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clientAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AIBank",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AIBank": {
+      "main": [
+        []
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AIBank",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "accountAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AIBank",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3acf352f-6526-48df-9978-d6acb2c82711",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "srOnR8PAY3u4RSwb",
+  "tags": []
+}
